@@ -12,6 +12,9 @@ public class Epic {
     @ManyToOne
     @JoinColumn(name = "project_id", nullable = false)
     private Project project;
+    @ManyToOne
+    @JoinColumn(name = "sprint_id")
+    private Sprint sprint;
 
     public Epic() {}
 
@@ -26,9 +29,11 @@ public class Epic {
     public String getTitle() { return title; }
     public String getDescription() { return description; }
     public Project getProject() { return project; }
+    public Sprint getSprint() { return sprint; }
     //Setters
     public void setId(long id) { this.id = id; }
     public void setTitle(String title) { this.title = title; }
     public void setDescription(String description) { this.description = description; }
     public void setProject(Project project) { this.project = project; }
+    public void setSprint(Sprint sprint) { this.sprint = sprint; }
 }
