@@ -15,8 +15,8 @@ public class ProjectInviteService {
         this.memberRepository = memberRepository;
     }
 
-    public ProjectInvite sendInvite(ProjectInvite invite) {
-
-        invite.setStatus(ProjectInvite.InviteStatus.IN_PROCESS);
-    }
+//    public ProjectInvite sendInvite(ProjectInvite invite) {
+//
+//        invite.setStatus(ProjectInvite.InviteStatus.IN_PROCESS);
+//    }
 }

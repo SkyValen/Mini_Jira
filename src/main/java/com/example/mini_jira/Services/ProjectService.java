@@ -21,11 +21,11 @@ public class ProjectService {
         this.userService = userService;
     }
 
-    public Project createProject(Project project) {
+    public Project createProject(Project project, Long userId) {
         Project savedProject = projectRepository.save(project);
 
         ProjectMember member =
-                new ProjectMember(project.getOwner(), savedProject);
+                new ProjectMember(userService.getUserById(userId), savedProject);
 
         projectMemberRepository.save(member);
 
@@ -37,7 +37,8 @@ public class ProjectService {
                 .orElseThrow(() -> new RuntimeException("Project not found"));
     }
 
-    public List<Project> getUserProjects(User user) {
+    public List<Project> getUserProjects(Long userId) {
+        User user = userService.getUserById(userId);
         List<ProjectMember> membership =
                 projectMemberRepository.findByUser(user);
         return membership.stream()
@@ -46,10 +47,8 @@ public class ProjectService {
     }
 
     public ProjectMember addUserToProject(Long userId, Long addedUserId, Long projectId) {
-        validateMembershipProject(userId, projectId);
-        validateMembershipProject(addedUserId, projectId);
+        Project project = validateMembershipProject(userId, projectId);
         User addedUser = userService.getUserById(addedUserId);
-        Project project = getProjectById(projectId);
         if (projectMemberRepository.existsByUserAndProject(addedUser, project)) {
             throw new RuntimeException("User Already in project");
         }

@@ -25,6 +25,7 @@ public class TaskService {
     public Task createTask(Task task, Long userId, Long projectId) {
         Project project = projectService.validateMembershipProject(userId, projectId);
         task.setProject(project);
+        task.setCreator(userService.getUserById(userId));
         return taskRepository.save(task);
     }
 
@@ -45,6 +46,12 @@ public class TaskService {
     public List<Task> getTasksByProject(Long projectId, Long userId) {
         Project project = projectService.validateMembershipProject(userId, projectId);
         return taskRepository.findByProject(project);
+    }
+
+    public List<Task> getTasksByEpic(Long epicId, Long userId, Long projectId) {
+        projectService.validateMembershipProject(userId, projectId);
+        Epic epic = epicService.validateEpic(epicId, projectId);
+        return taskRepository.findByEpic(epic);
     }
 
     public List<Task> getTasksByAssignee(Long assigneeId, Long projectId, Long searcherId) {

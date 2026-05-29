@@ -29,9 +29,9 @@ public class UserService {
     public List<User> getAllUsers() {
         return userRepository.findAll();
     }
-    public User Login(String username, String password) {
+    public User login(String username, String password) {
         User user = getByUsername(username);
-        if (!user.getUsername().equals(username) || !user.getPassword().equals(password)) {
+        if (!user.getPassword().equals(password)) {
             throw new RuntimeException("Wrong password or username");
         }
         return user;

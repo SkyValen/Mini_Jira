@@ -3,6 +3,7 @@ package com.example.mini_jira.classes;
 import jakarta.persistence.*;
 
 @Entity
+@Table(name = "users")
 public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

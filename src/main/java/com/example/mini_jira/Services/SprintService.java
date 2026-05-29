@@ -26,16 +26,15 @@ public class SprintService {
         return sprintRepository.save(sprint);
     }
 
-    public Sprint getActiveSprint(Long userId, Long projectId){
-        projectService.validateMembershipProject(userId, projectId);
-        Project project = projectService.getProjectById(projectId);
-        return sprintRepository.findByProjectAndActive(project, true)
-                .orElseThrow(() -> new RuntimeException("No active sprint"));
-    }
-
     public Sprint getSprintById(Long sprintId) {
         return sprintRepository.findById(sprintId)
                 .orElseThrow(() -> new RuntimeException("Could not find a sprint"));
+    }
+
+    public Sprint getActiveSprint(Long userId, Long projectId){
+        Project project = projectService.validateMembershipProject(userId, projectId);
+        return sprintRepository.findByProjectAndActive(project, true)
+                .orElseThrow(() -> new RuntimeException("No active sprint"));
     }
 
     public List<Sprint> getProjectSprints( Long userId, Long projectId) {

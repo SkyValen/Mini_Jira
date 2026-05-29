@@ -3,6 +3,7 @@ package com.example.mini_jira.classes;
 import jakarta.persistence.*;
 
 @Entity
+@Table(name = "tasks")
 public class Task {
     public enum TaskStatus {
         TODO,

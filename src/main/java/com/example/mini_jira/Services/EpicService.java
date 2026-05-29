@@ -19,7 +19,7 @@ public class EpicService {
     }
 
     public Epic createEpic(Epic epic, Long userId, Long projectId) {
-        projectService.validateMembershipProject(userId, projectId);
+        Project project = projectService.validateMembershipProject(userId, projectId);
         epic.setProject(project);
         return epicRepository.save(epic);
     }
@@ -29,8 +29,8 @@ public class EpicService {
                 .orElseThrow(() -> new RuntimeException("Epic not found"));
     }
 
-    public List<Epic> getEpicsByProject(Project project, User user) {
-        projectService.validateMembershipProject(user, project);
+    public List<Epic> getEpicsByProject(Long projectId, Long userId) {
+        Project project = projectService.validateMembershipProject(userId, projectId);
         return epicRepository.findByProject(project);
     }
 

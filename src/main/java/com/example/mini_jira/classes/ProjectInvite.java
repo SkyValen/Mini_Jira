@@ -5,6 +5,7 @@ import jakarta.persistence.*;
 import java.time.LocalDateTime;
 
 @Entity
+@Table(name = "projectInvites")
 public class ProjectInvite {
     public enum InviteStatus {
         IN_PROCESS,
