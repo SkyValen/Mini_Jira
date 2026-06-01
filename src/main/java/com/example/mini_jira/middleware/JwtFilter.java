@@ -40,9 +40,9 @@ public class JwtFilter extends OncePerRequestFilter {
             return;
         }
 
-        String username = jwtService.extractUsername(token);
+        Long id = jwtService.extractId(token);
 
-        request.setAttribute("username", username);
+        request.setAttribute("id", id);
 
         filterChain.doFilter(request, response);
     }

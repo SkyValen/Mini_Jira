@@ -26,9 +26,6 @@ public class UserService {
         return userRepository.findByUsername(username)
                 .orElseThrow(() -> new RuntimeException("User not found"));
     }
-    public List<User> getAllUsers() {
-        return userRepository.findAll();
-    }
     public User login(String username, String password) {
         User user = getByUsername(username);
         if (!user.getPassword().equals(password)) {
