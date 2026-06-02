@@ -17,12 +17,13 @@ public class SprintService {
         this.projectService = projectService;
     }
 
-    public Sprint createSprint(Sprint sprint, Long userId, Long projectId) {
+    public Sprint startSprint(Sprint sprint, Long userId, Long projectId) {
         Project project = projectService.validateMembershipProject(userId, projectId);
         if (sprintRepository.existsByProjectAndActive(project, true)) {
             throw new RuntimeException("There is currently active sprint in the project");
         }
         sprint.setProject(project);
+        sprint.setActive(true);
         return sprintRepository.save(sprint);
     }
 
@@ -43,28 +44,13 @@ public class SprintService {
         return sprintRepository.findByProject(project);
     }
 
-    public Sprint startSprint(Long sprintId, Long userId, Long projectId){
-        Project project = projectService.validateMembershipProject(userId, projectId);
-        Sprint sprint = validateSprint(sprintId, projectId);
-
-        sprintRepository.findByProjectAndActive(project, true)
-                .ifPresent(old -> {
-                    old.setActive(false);
-                    sprintRepository.save(old);
-                });
-
-        sprint.setActive(true);
-
-        return sprintRepository.save(sprint);
-    }
-
-    public void endActiveSprint(Long userId, Long projectId) {
+    public Sprint endActiveSprint(Long userId, Long projectId) {
         Project project = projectService.validateMembershipProject(userId, projectId);
         Sprint sprint = sprintRepository.findByProjectAndActive(project, true)
                 .orElseThrow(() -> new RuntimeException("Could not find an active sprint"));
 
         sprint.setActive(false);
-        sprintRepository.save(sprint);
+        return sprintRepository.save(sprint);
     }
 
     public Sprint validateSprint(Long sprintId, Long projectId) {

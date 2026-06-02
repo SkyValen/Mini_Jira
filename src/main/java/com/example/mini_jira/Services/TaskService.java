@@ -22,6 +22,7 @@ public class TaskService {
         this.userService = userService;
     }
 
+    //Tasks
     public Task createTask(Task task, Long userId, Long projectId) {
         Project project = projectService.validateMembershipProject(userId, projectId);
         task.setProject(project);
@@ -48,20 +49,6 @@ public class TaskService {
         return taskRepository.findByProject(project);
     }
 
-    public List<Task> getTasksByEpic(Long epicId, Long userId, Long projectId) {
-        projectService.validateMembershipProject(userId, projectId);
-        Epic epic = epicService.validateEpic(epicId, projectId);
-        return taskRepository.findByEpic(epic);
-    }
-
-    public List<Task> getTasksByAssignee(Long assigneeId, Long projectId, Long searcherId) {
-        Project project = projectService.validateMembershipProject(searcherId, projectId);
-
-        User assignee = projectService.validateMembershipUser(assigneeId, projectId);
-
-        return taskRepository.findByProjectAndAssignee(project, assignee);
-    }
-
     public Task changeStatus(Long taskId, Task.TaskStatus status, Long userId, Long projectId) {
         projectService.validateMembershipProject(userId, projectId);
 
@@ -71,6 +58,13 @@ public class TaskService {
         return taskRepository.save(task);
     }
 
+    public void deleteTask(Long taskId, Long userId, Long projectId) {
+        projectService.validateMembershipProject(userId, projectId);
+        Task task = validateTask(taskId, projectId);
+        taskRepository.delete(task);
+    }
+
+    //Assignee
     public Task assignUser(Long taskId, Long assigneeId, Long userId, Long projectId) {
         projectService.validateMembershipProject(userId, projectId);
 
@@ -82,12 +76,24 @@ public class TaskService {
         return taskRepository.save(task);
     }
 
-    public void deleteTask(Long taskId, Long userId, Long projectId) {
-        projectService.validateMembershipProject(userId, projectId);
-        Task task = validateTask(taskId, projectId);
-        taskRepository.delete(task);
+    public List<Task> getTasksByAssignee(Long assigneeId, Long projectId, Long searcherId) {
+        Project project = projectService.validateMembershipProject(searcherId, projectId);
+
+        User assignee = projectService.validateMembershipUser(assigneeId, projectId);
+
+        return taskRepository.findByProjectAndAssignee(project, assignee);
     }
 
+    public Task unassignUser(Long taskId, Long userId, Long projectId) {
+        projectService.validateMembershipProject(userId, projectId);
+
+        Task task = validateTask(taskId, projectId);
+
+        task.setAssignee(null);
+        return taskRepository.save(task);
+    }
+
+    //Sprint
     public Task addToSprint (Long taskId, Long userId, Long projectId, Long sprintId) {
         projectService.validateMembershipProject(userId, projectId);
         sprintService.validateSprint(sprintId, projectId);
@@ -107,6 +113,7 @@ public class TaskService {
         return taskRepository.save(task);
     }
 
+    //Epic
     public Task addToEpic(Long taskId, Long userId, Long projectId, Long epicId) {
         projectService.validateMembershipProject(userId, projectId);
 
@@ -125,5 +132,11 @@ public class TaskService {
 
         task.setEpic(null);
         return taskRepository.save(task);
+    }
+
+    public List<Task> getTasksByEpic(Long epicId, Long userId, Long projectId) {
+        projectService.validateMembershipProject(userId, projectId);
+        Epic epic = epicService.validateEpic(epicId, projectId);
+        return taskRepository.findByEpic(epic);
     }
 }
