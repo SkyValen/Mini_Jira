@@ -58,6 +58,16 @@ public class ProjectService {
         return projectMemberRepository.save(member);
     }
 
+    public void deleteUserFromProject(Long userId, Long deletedUserId, Long projectId) {
+        Project project = validateMembershipProject(userId, projectId);
+        User deletedUser = validateMembershipUser(deletedUserId, projectId);
+        if (project.getOwner().equals(deletedUser)) {
+            throw new RuntimeException("You cannot delete owner of the project");
+        }
+        projectMemberRepository.findByUserAndProject(deletedUser, project)
+                .ifPresent(projectMemberRepository::delete);
+    }
+
     public Project validateMembershipProject(Long userId, Long projectId) {
         User user = userService.getUserById(userId);
         Project project = getProjectById(projectId);

@@ -47,7 +47,7 @@ public class Task {
     }
 
     //Getters
-    public long getId() { return id; }
+    public Long getId() { return id; }
     public String getTitle() { return title; }
     public String getDescription() { return description; }
     public TaskStatus getStatus() { return status; }

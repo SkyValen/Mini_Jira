@@ -19,7 +19,7 @@ public class User {
     }
 
     //Getters
-    public long getId() { return id; }
+    public Long getId() { return id; }
     public String getUsername() { return username; }
     public String getPassword() { return password; }
 
