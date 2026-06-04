@@ -2,7 +2,7 @@ package com.example.mini_jira.Services;
 
 import com.example.mini_jira.classes.Epic;
 import com.example.mini_jira.classes.Project;
-import com.example.mini_jira.classes.User;
+import com.example.mini_jira.classes.Sprint;
 import com.example.mini_jira.repositories.EpicRepository;
 import org.springframework.stereotype.Service;
 
@@ -12,10 +12,12 @@ import java.util.List;
 public class EpicService {
     private final EpicRepository epicRepository;
     private final ProjectService projectService;
+    private final SprintService sprintService;
 
-    public EpicService (EpicRepository epicRepository, ProjectService projectService) {
+    public EpicService (EpicRepository epicRepository, ProjectService projectService, SprintService sprintService) {
         this.epicRepository = epicRepository;
         this.projectService = projectService;
+        this.sprintService = sprintService;
     }
 
     public Epic createEpic(Epic epic, Long userId, Long projectId) {
@@ -27,6 +29,11 @@ public class EpicService {
     public Epic getEpicById(Long epicId) {
         return epicRepository.findById(epicId)
                 .orElseThrow(() -> new RuntimeException("Epic not found"));
+    }
+
+    public List<Epic> getEpicsBySprint(Long sprintId, Long projectId) {
+        Sprint sprint = sprintService.validateSprint(sprintId, projectId);
+        return epicRepository.findBySprint(sprint);
     }
 
     public List<Epic> getEpicsByProject(Long projectId, Long userId) {
@@ -47,5 +54,13 @@ public class EpicService {
         projectService.validateMembershipProject(userId, projectId);
         Epic epic = validateEpic(epicId, projectId);
         epicRepository.delete(epic);
+    }
+
+    public Epic addToSprint(Long sprintId, Long userId, Long projectId, Long epicId){
+        projectService.validateMembershipProject(userId, projectId);
+        Epic epic = validateEpic(epicId, projectId);
+        Sprint sprint = sprintService.validateSprint(sprintId, projectId);
+        epic.setSprint(sprint);
+        return epicRepository.save(epic);
     }
 }

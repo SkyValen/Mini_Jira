@@ -1,6 +1,7 @@
 package com.example.mini_jira.controllers;
 
 import com.example.mini_jira.Services.ProjectInviteService;
+import com.example.mini_jira.Services.UserService;
 import com.example.mini_jira.classes.ProjectInvite;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.http.HttpStatus;
@@ -14,18 +15,21 @@ import java.util.List;
 public class ProjectInviteController {
 
     private final ProjectInviteService projectInviteService;
+    private final UserService userService;
 
-    public ProjectInviteController(ProjectInviteService projectInviteService) {
+    public ProjectInviteController(ProjectInviteService projectInviteService, UserService userService) {
         this.projectInviteService = projectInviteService;
+        this.userService = userService;
     }
 
-    @PostMapping("/project/{projectId}/user/{userId}")
+    @PostMapping("/project/{projectId}/user/{username}")
     public ResponseEntity<ProjectInvite> createInvite(
             @PathVariable Long projectId,
-            @PathVariable Long userId,
+            @PathVariable String username,
             HttpServletRequest request
     ) {
         Long inviterId = (Long) request.getAttribute("id");
+        Long userId = userService.getByUsername(username).getId();
 
         return ResponseEntity.status(HttpStatus.CREATED).body(projectInviteService.createInvite(projectId, inviterId, userId));
     }

@@ -22,10 +22,12 @@ public class ProjectService {
     }
 
     public Project createProject(Project project, Long userId) {
+        User user = userService.getUserById(userId);
+        project.setOwner(user);
         Project savedProject = projectRepository.save(project);
 
         ProjectMember member =
-                new ProjectMember(userService.getUserById(userId), savedProject);
+                new ProjectMember(user, savedProject);
 
         projectMemberRepository.save(member);
 

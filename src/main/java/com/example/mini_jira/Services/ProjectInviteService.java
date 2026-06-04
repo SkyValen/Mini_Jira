@@ -4,6 +4,7 @@ import com.example.mini_jira.classes.Project;
 import com.example.mini_jira.classes.ProjectInvite;
 import com.example.mini_jira.classes.User;
 import com.example.mini_jira.repositories.ProjectInviteRepository;
+import com.example.mini_jira.repositories.ProjectMemberRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -13,21 +14,23 @@ public class ProjectInviteService {
     private final ProjectInviteRepository inviteRepository;
     private final ProjectService projectService;
     private final UserService userService;
+    private final ProjectMemberRepository projectMemberRepository;
 
-    public ProjectInviteService (ProjectInviteRepository inviteRepository, ProjectService projectService,UserService userService) {
+    public ProjectInviteService (ProjectInviteRepository inviteRepository, ProjectService projectService,UserService userService, ProjectMemberRepository projectMemberRepository) {
         this.inviteRepository = inviteRepository;
         this.projectService = projectService;
         this.userService = userService;
+        this.projectMemberRepository = projectMemberRepository;
     }
 
     public ProjectInvite createInvite(Long projectId, Long inviterId, Long invitedUserId){
         Project project = projectService.validateMembershipProject(inviterId, projectId);
+        User invitedUser = userService.getUserById(invitedUserId);
 
-        if (projectService.validateMembershipUser(invitedUserId, projectId) != null) {
+        if (projectMemberRepository.findByUserAndProject(invitedUser, project).isPresent()) {
             throw new RuntimeException("User already in project");
         }
 
-        User invitedUser = userService.getUserById(invitedUserId);
         User inviter = userService.getUserById(inviterId);
         inviteRepository.findByProjectAndInvitedUserAndStatus(project, invitedUser, ProjectInvite.InviteStatus.IN_PROCESS)
                 .ifPresent(invite -> {

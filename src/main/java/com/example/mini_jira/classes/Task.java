@@ -37,13 +37,12 @@ public class Task {
 
     public Task() {}
 
-    public Task(String title, String description, Project project, User creator, Epic epic) {
+    public Task(String title, String description, Project project, User creator) {
         this.title = title;
         this.description = description;
         this.project = project;
         this.status = TaskStatus.TODO;
         this.creator = creator;
-        this.epic = epic;
     }
 
     //Getters
